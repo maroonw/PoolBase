@@ -47,7 +47,7 @@ const poolSchema = new mongoose.Schema(
 
 )
 
-noteSchema.plugin(AutoIncrement, {
+poolSchema.plugin(AutoIncrement, {
     inc_field: 'poolNumber',
     id: 'pool_id',
     start_seq: 1000
