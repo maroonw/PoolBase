@@ -29,6 +29,8 @@ app.use('/', require('./routes/root'))
 
 app.use('/users', require('./routes/userRoutes.js'))
 
+app.use('/pools', require('./routes/poolRoutes.js'))
+
 
 // Catch all that goes at the end!!
 app.all('*', (req, res) => {

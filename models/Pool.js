@@ -3,7 +3,7 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const poolSchema = new mongoose.Schema(
     {
-    name: {
+    poolname: {
         type: String,
         required: true,
         trim: true
@@ -13,18 +13,18 @@ const poolSchema = new mongoose.Schema(
         required: true,
         trim: true
     },
-    size: {
-        type: String,
+    gallons: {
+        type: Number,
         required: true
     },
     type: {
         type: String,
-        required: true,
+        required: false,
         enum: ['Personal', 'PoolPro', 'Manager']
     },
     waterType: {
         type: String,
-        required: true,
+        required: false,
         enum: ['Chlorine', 'Saltwater', 'Other']
     },
     maintenanceRecords: [{
@@ -37,7 +37,7 @@ const poolSchema = new mongoose.Schema(
     }],
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
+        required: false,
         ref: 'User'
     }
     },
