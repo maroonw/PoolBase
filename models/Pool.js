@@ -3,48 +3,47 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const poolSchema = new mongoose.Schema(
     {
-    poolname: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    address: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    gallons: {
-        type: Number,
-        required: true
-    },
-    type: {
-        type: String,
-        required: false,
-        enum: ['Personal', 'PoolPro', 'Manager']
-    },
-    waterType: {
-        type: String,
-        required: false,
-        enum: ['Chlorine', 'Saltwater', 'Other']
-    },
-    maintenanceRecords: [{
-        date: Date,
-        serviceProvided: String,
-        notes: String,
-        serviceBy: {
-            type: mongoose.Schema.Types.ObjectId
+        poolname: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        address: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        description: {  // Changed from 'gallons' to 'description'
+            type: String,
+            required: true
+        },
+        type: {
+            type: String,
+            required: false,
+            enum: ['Personal', 'PoolPro', 'Manager']
+        },
+        waterType: {
+            type: String,
+            required: false,
+            enum: ['Chlorine', 'Saltwater', 'Other']
+        },
+        maintenanceRecords: [{
+            date: Date,
+            serviceProvided: String,
+            notes: String,
+            serviceBy: {
+                type: mongoose.Schema.Types.ObjectId
+            }
+        }],
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: false,
+            ref: 'User'
         }
-    }],
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: false,
-        ref: 'User'
-    }
     },
     {
-    timestamps: true
+        timestamps: true
     }
-
 )
 
 poolSchema.plugin(AutoIncrement, {

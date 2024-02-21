@@ -12,7 +12,7 @@ const getAllPools = asyncHandler(async (req, res) => {
 
     // If no pools
     if (!pools?.length) {
-        return res.status(400).json({ message: 'No pools found' })
+        return res.status(200).json([])
     }
 
     res.json(pools)
@@ -22,21 +22,21 @@ const getAllPools = asyncHandler(async (req, res) => {
 // @route   POST /pools
 // @access  Private
 const createNewPool = asyncHandler(async (req, res) => {
-    const { poolname, address, gallons } = req.body
+    const { poolname, address, description } = req.body
 
     // Confirm data
-    if (!poolname || !address || !gallons) {
+    if (!poolname || !address || !description) {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
-    // Check for duplicate name, address, and gallons
-    const duplicate = await Pool.findOne({ poolname, address, gallons }).lean().exec()
+    // Check for duplicate name, address, and description
+    const duplicate = await Pool.findOne({ poolname, address, description }).lean().exec()
 
     if (duplicate) {
         return res.status(409).json({ message: 'This pool already exists' })
     }
 
-    const poolObject = { poolname, address, gallons }
+    const poolObject = { poolname, address, description }
 
     // Create and store new pool
     const pool = await Pool.create(poolObject)
@@ -52,10 +52,10 @@ const createNewPool = asyncHandler(async (req, res) => {
 // @route   PATCH /pools
 // @access  Private
 const updatePool = asyncHandler(async (req, res) => {
-    const { id, poolname, address, gallons } = req.body
+    const { id, poolname, address, description } = req.body
 
     // Confirm data 
-    if (!id || !poolname || !address || !gallons) {
+    if (!id || !poolname || !address || !description) {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
@@ -67,16 +67,16 @@ const updatePool = asyncHandler(async (req, res) => {
     }
 
     // Check for duplicate 
-    const duplicate = await Pool.findOne({ poolname }).lean().exec()
+    const duplicate = await Pool.findOne({ poolname, address, description }).lean().exec()
 
-    // Allow updates to the original user 
+    // Allow updates to the original pool 
     if (duplicate && duplicate?._id.toString() !== id) {
-        return res.status(409).json({ message: 'Duplicate poolname' })
+        return res.status(409).json({ message: 'Duplicate pool' })
     }
 
     pool.poolname = poolname
     pool.address = address
-    pool.gallons = gallons
+    pool.description = description
 
     const updatedPool = await pool.save()
 
@@ -101,9 +101,7 @@ const deletePool = asyncHandler (async (req, res) => {
         return res.status(400).json({ message: 'Pool not found' })
     }
 
-    const result = await pool.deleteOne()
-
-    const reply = `Pool ${result.poolname} with ID ${result._id} deleted`
+    const reply = `Pool ${pool.poolname} with ID ${pool._id} deleted`
 
     res.json(reply)
 })

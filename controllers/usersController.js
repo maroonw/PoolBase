@@ -3,9 +3,9 @@ const Pool = require('../models/Pool')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 
-// @desc    Get all users
-// @route   GET /users
-// @access  Private
+// @desc Get all users
+// @route GET /users
+// @access Private
 const getAllUsers = asyncHandler(async (req, res) => {
     // Get all users from MongoDB
     const users = await User.find().select('-password').lean()
@@ -18,9 +18,9 @@ const getAllUsers = asyncHandler(async (req, res) => {
     res.json(users)
 })
 
-// @desc    Create new user
-// @route   POST /users
-// @access  Private
+// @desc Create new user
+// @route POST /users
+// @access Private
 const createNewUser = asyncHandler(async (req, res) => {
     const { username, password, roles } = req.body
 
@@ -51,9 +51,9 @@ const createNewUser = asyncHandler(async (req, res) => {
     }
 })
 
-// @desc    Update a user
-// @route   PATCH /users
-// @access  Private
+// @desc Update a user
+// @route PATCH /users
+// @access Private
 const updateUser = asyncHandler(async (req, res) => {
     const { id, username, roles, active, password } = req.body
 
@@ -91,23 +91,25 @@ const updateUser = asyncHandler(async (req, res) => {
     res.json({ message: `${updatedUser.username} updated` })
 })
 
-// @desc    Delete a user
-// @route   DELETE /users
-// @access  Private
-
-const deleteUser = asyncHandler (async (req, res) => {
+// @desc Delete a user
+// @route DELETE /users
+// @access Private
+const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.body
 
+    // Confirm data
     if (!id) {
-        return res.status(400).json({ message: 'ID is required' })
+        return res.status(400).json({ message: 'User ID Required' })
     }
 
-    const pool = await Pool.findOne({ user: id}).lean().exec()
+    // Does the user still have assigned pools?
+    const pool = await Pool.findOne({ user: id }).lean().exec()
     if (pool) {
-        return res.status(400).json({ message: 'User is associated with a pool' })
+        return res.status(400).json({ message: 'User has assigned pools' })
     }
 
-    const user = await User.findByIdAndDelete(id).exec()
+    // Does the user exist to delete?
+    const user = await User.findById(id).exec()
 
     if (!user) {
         return res.status(400).json({ message: 'User not found' })
